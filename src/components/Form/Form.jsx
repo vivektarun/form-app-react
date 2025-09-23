@@ -1,90 +1,42 @@
-import { useEffect, useRef, useState } from 'react';
-import './Form.css'
-import validatePassword from '../../helper/passwordValidator';
-import validateEmail from '../../helper/emailValidator';
+import { useContext, useRef } from 'react';
+import Input from '../Input/Input';
+import FormContext from '../../providers/FormContext';
 
 function Form() {
+    
+    const {formInput} = useContext(FormContext);
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
 
-    useEffect(() => {
-        console.log(emailRef.current);
-    }, [])
-
-    // const exampleRef = useRef(0);
-
-    // useEffect(() => {
-    //     console.log(exampleRef);
-    // }, []);
-
-    //Here we have only 2 input, so we are making 2 usestate but if suppose we have 10 input then ?.
-    // const [email, setEmail] = useState("");
-    // const [password, setPassword] = useState("");
-
-    const [formValues, setFormValues] = useState({
-        email: "",
-        password: ""
-    });
-
-    const handleValidatepassword = () => {
-        const password = formValues.password;
-        if(!validatePassword(password)) {
-            passwordRef.current.focus();
-            console.log("password doesn't contain required parameter");
-        }
-    }
-
-    const handeleValidateEmail = () => {
-        emailRef
-        const email = formValues.email;
-        if(!validateEmail(email)) {
-            emailRef.current.focus();
-            console.log("email doesn't contain the required parameter");
-        }
-    }
-
-    //generally when we submit the form, page automatically refresh
-    //we don't want that
     function handleFormSubmit(event) {
         event.preventDefault();
-        handleValidatepassword();
-        handeleValidateEmail();
-        console.log(formValues);
-
-
-        //This is not suggested, because we should come out of dom manupulation and use the power of react.
-        // document.getElementById('email-input').focus();
-
-        //After submiting the form clear the field.
-        setFormValues({email: "", password: ""});
+        // we have access to form input here, that means validation can occur here.
+        console.log(formInput);
+        emailRef.current.setInvalid();
+        emailRef.current.shake();
     }
+
     return (
         <div>
             New form
-            <form onSubmit={handleFormSubmit}>
-                <div className="wrapper email-input-wrapper">
-                    <label >Email: </label>
-                    <input 
-                        id='email-input'
-                        placeholder='email'
-                        name='email'
-                        type="text" 
-                        value={formValues.email}
-                        onChange={(event) => setFormValues( {...formValues, email: event.target.value})}
-                        ref={emailRef}
+            <form onSubmit={handleFormSubmit} noValidate>
+                <div className="wrapper email-input-wrapper">                
+                    <Input
+                        id={"email-input"}
+                        name={"email"}
+                        type={"email"}
+                        inputType={"Email: "}
+                        inputRef={emailRef}
                     />
                 </div>
                 <div className="wrapper password-input-wrapper">
-                    <label >Password: </label>
-                    <input 
-                        id='password-input'
-                        placeholder='password'
-                        name='email'
-                        type="text" 
-                        value={formValues.password}
-                        onChange={(event) => setFormValues({...formValues, password: event.target.value})}
-                        ref={passwordRef}
+                    <Input 
+                        id={"password-input"}
+                        name={"email"}
+                        type={"text"}
+                        inputType={"Password: "}
+                        inputRef={passwordRef}
                     />
                 </div>
                 <input type="submit" />
@@ -109,4 +61,22 @@ export default Form;
  * changes in refs doesn't cause the re-rendering, as in useState causes and
  * ref variable is local to every component, suppose we are rendering any component three times 
  * all of these three component will have different refs local to them.
+ */
+
+/**
+ * There are 3 available wasy to validate/submit form
+ * 1. full fledget 3rd party lib (react hook form)
+ * 2. controlled component
+ * 3. unControlled component
+ */
+
+/**
+ * what is controlled component
+ * it involves manual state management, which can cause irrelevent re-renders
+ * when using a controlled component, you write an event handler for every way your data can change.
+ * controlled components also require you to maintain all the validation logic.
+ */
+
+/**
+ * 
  */
